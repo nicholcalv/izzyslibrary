@@ -1,0 +1,143 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Izzy's Library</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero">
+      <div class="hero__content">
+        <p class="hero__eyebrow">Ella Diaries Collection</p>
+        <div class="hero__title-row">
+          <h1>Izzy's Library</h1>
+          <img class="hero__logo" src="logo.png" alt="Izzy's Library App logo" />
+        </div>
+        <p class="hero__subtitle">
+          Track reading progress, browse the collection, and keep a wish list for
+          missing titles.
+        </p>
+        <div class="hero__stats" id="stats"></div>
+      </div>
+      <div class="hero__panel"></div>
+    </header>
+
+    <main>
+      <section class="controls">
+        <label class="search">
+          <span>Search titles</span>
+          <input type="search" id="searchInput" placeholder="Type a title" />
+        </label>
+
+        <label class="sort">
+          <span>Sort by</span>
+          <select id="sortSelect">
+            <option value="order">Series order</option>
+            <option value="progress">Progress</option>
+            <option value="title">Title</option>
+            <option value="pages">Pages read</option>
+          </select>
+        </label>
+
+        <label class="tag-filter">
+          <span>Filter by tag</span>
+          <select id="tagFilter">
+            <option value="all">All tags</option>
+          </select>
+        </label>
+
+        <div class="filters" id="statusFilters" role="group" aria-label="Filter books">
+          <button class="filter active" data-status="all">All</button>
+          <button class="filter" data-status="reading">Reading</button>
+          <button class="filter" data-status="finished">Finished</button>
+          <button class="filter" data-status="unstarted">Unstarted</button>
+          <button class="filter" data-status="unknown">Unknown</button>
+        </div>
+      </section>
+
+      <section class="add-book">
+        <div class="section-header">
+          <h2>Add a Book</h2>
+          <p>Use the button to add a new title.</p>
+        </div>
+        <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
+      </section>
+
+      <section class="shelf">
+        <div class="section-header">
+          <h2>Books I Have</h2>
+          <p id="resultsCount"></p>
+        </div>
+        <div class="book-grid" id="bookGrid"></div>
+      </section>
+
+    </main>
+
+    <div class="modal-backdrop" id="editBackdrop" hidden>
+      <div class="modal">
+        <div class="modal__header">
+          <h2>Edit Book</h2>
+          <button class="modal__close" id="editClose" type="button">Close</button>
+        </div>
+        <form id="editForm">
+          <label>
+            <span>Title</span>
+            <input type="text" id="editTitle" required />
+          </label>
+          <label>
+            <span>Tags (optional, comma-separated)</span>
+            <input type="text" id="editTag" placeholder="Christmas, Super Special" />
+          </label>
+          <label>
+            <span>Cover image (optional)</span>
+            <input type="file" id="editCover" accept="image/*" />
+          </label>
+          <label>
+            <span>Pages read</span>
+            <input type="number" id="editPages" min="0" />
+          </label>
+          <button type="submit" class="edit-save">Save</button>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-backdrop" id="addBackdrop" hidden>
+      <div class="modal">
+        <div class="modal__header">
+          <h2>Add a Book</h2>
+          <button class="modal__close" id="addClose" type="button">Close</button>
+        </div>
+        <form id="addBookForm">
+          <label>
+            <span>Title</span>
+            <input type="text" name="title" placeholder="Book title" required />
+          </label>
+          <label>
+            <span>Pages read</span>
+            <input type="number" name="pagesRead" min="0" placeholder="0" />
+          </label>
+          <label>
+            <span>Total pages</span>
+            <input type="number" name="totalPages" min="0" placeholder="150" />
+          </label>
+          <label>
+            <span>Tags (optional, comma-separated)</span>
+            <input type="text" name="tag" placeholder="Christmas, Super Special" />
+          </label>
+          <label>
+            <span>Cover image file (optional)</span>
+            <input type="file" name="coverFile" accept="image/*" />
+          </label>
+          <button type="submit" class="edit-save">Add book</button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <p>❤️ Made with love by Isabelle and Dad ❤️</p>
+    </footer>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
