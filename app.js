@@ -78,40 +78,62 @@ function readFileAsDataUrl(file) {
   });
 }
 
+const STORAGE_KEY = "izzyslibrary:books";
+
+function readStoredBooks() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.have)) return null;
+    return data;
+  } catch (error) {
+    return null;
+  }
+}
+
+function writeStoredBooks(books) {
+  const payload = { have: books };
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
 async function fetchLibrary() {
-  const response = await fetch("/api/books");
+  const stored = readStoredBooks();
+  if (stored) return stored;
+  const response = await fetch("data/books.json");
   if (!response.ok) {
     throw new Error("Failed to load library data.");
   }
-  return response.json();
+  const data = await response.json();
+  return data;
 }
 
 async function createBook(book) {
-  const response = await fetch("/api/books", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(book),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to save book.");
-  }
-  return response.json();
+  const books = Array.isArray(state.books) ? [...state.books] : [];
+  const nextId =
+    books.reduce((max, item) => (typeof item.id === "number" ? Math.max(max, item.id) : max), 0) +
+    1;
+  const newBook = {
+    id: nextId,
+    ...book,
+  };
+  books.push(newBook);
+  writeStoredBooks(books);
+  return { have: books };
 }
 
 async function updateBookDetails(id, payload) {
-  const response = await fetch(`/api/books/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    throw new Error("Failed to update book.");
+  const books = Array.isArray(state.books) ? [...state.books] : [];
+  const index = books.findIndex((book) => book.id === id);
+  if (index === -1) {
+    throw new Error("Book not found.");
   }
-  return response.json();
+  books[index] = {
+    ...books[index],
+    ...payload,
+  };
+  writeStoredBooks(books);
+  return { have: books };
 }
 
 function renderStats() {
@@ -451,14 +473,8 @@ function attachEvents() {
 }
 
 async function init() {
-  try {
-    const data = await fetchLibrary();
-    state.books = data.have || [];
-  } catch (error) {
-    const response = await fetch("data/books.json");
-    const data = await response.json();
-    state.books = data.have || [];
-  }
+  const data = await fetchLibrary();
+  state.books = data.have || [];
 
   renderStats();
   renderTagFilter();
