@@ -42,6 +42,15 @@ function getProgress(book) {
   }
   return null;
 }
+function withComputedProgress(book) {
+  const progress =
+    typeof book.pagesRead === "number" &&
+    typeof book.totalPages === "number" &&
+    book.totalPages > 0
+      ? book.pagesRead / book.totalPages
+      : null;
+  return { ...book, progress };
+}
 function formatPercent(value) {
   if (value === null || Number.isNaN(value)) return "-";
   return `${Math.round(value * 100)}%`;
@@ -244,7 +253,7 @@ function attachEvents() {
 async function init() {
   try {
     const data = await fetchLibrary();
-    state.books = data.have || [];
+    state.books = (data.have || []).map(withComputedProgress);
     state.dontHave = data.dontHave || [];
   } catch (error) {
     state.books = [];

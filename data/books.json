@@ -5,288 +5,288 @@
       "title": "Dreams Come True",
       "pagesRead": 6,
       "totalPages": 143,
-      "progress": 0.04195804196,
-      "coverPath": "data/covers/cover-row-2.jpeg"
+      "coverPath": "data/covers/cover-row-2.jpeg",
+      "tag": null
     },
     {
       "id": 2,
       "title": "Dolphin Dreaming",
       "pagesRead": 32,
       "totalPages": 143,
-      "progress": 0.2237762238,
-      "coverPath": "data/covers/cover-row-3.jpeg"
+      "coverPath": "data/covers/cover-row-3.jpeg",
+      "tag": null
     },
     {
       "id": 3,
       "title": "Flash Mob Fever",
       "pagesRead": 16,
       "totalPages": 142,
-      "progress": 0.1126760563,
-      "coverPath": "data/covers/cover-row-4.jpeg"
+      "coverPath": "data/covers/cover-row-4.jpeg",
+      "tag": null
     },
     {
       "id": 4,
       "title": "The Amazingly Excellent Journal",
       "pagesRead": 21,
       "totalPages": null,
-      "progress": null,
-      "coverPath": "data/covers/cover-row-5.jpeg"
+      "coverPath": "data/covers/cover-row-5.jpeg",
+      "tag": "Journal"
     },
     {
       "id": 5,
       "title": "Wedding Belles",
       "pagesRead": 10,
       "totalPages": 142,
-      "progress": 0.07042253521,
-      "coverPath": "data/covers/cover-row-6.jpeg"
+      "coverPath": "data/covers/cover-row-6.jpeg",
+      "tag": null
     },
     {
       "id": 6,
       "title": "Goal Power (Super Special)",
       "pagesRead": 10,
       "totalPages": 143,
-      "progress": 0.06993006993,
-      "coverPath": "data/covers/cover-row-7.jpeg"
+      "coverPath": "data/covers/cover-row-7.jpeg",
+      "tag": "Super Special"
     },
     {
       "id": 7,
       "title": "Friends Not Forever",
       "pagesRead": 6,
       "totalPages": 142,
-      "progress": 0.04225352113,
-      "coverPath": "data/covers/cover-row-8.jpeg"
+      "coverPath": "data/covers/cover-row-8.jpeg",
+      "tag": null
     },
     {
       "id": 8,
       "title": "Time to Shine",
       "pagesRead": 15,
       "totalPages": 143,
-      "progress": 0.1048951049,
-      "coverPath": "data/covers/cover-row-9.jpeg"
+      "coverPath": "data/covers/cover-row-9.jpeg",
+      "tag": null
     },
     {
       "id": 9,
       "title": "The Fantabulously Fabulous Journal",
       "pagesRead": 11,
       "totalPages": null,
-      "progress": null,
-      "coverPath": "data/covers/cover-row-10.jpeg"
+      "coverPath": "data/covers/cover-row-10.jpeg",
+      "tag": "Journal"
     },
     {
       "id": 10,
       "title": "Pony School Showdown",
       "pagesRead": 10,
       "totalPages": 143,
-      "progress": 0.06993006993,
-      "coverPath": "data/covers/cover-row-11.jpeg"
+      "coverPath": "data/covers/cover-row-11.jpeg",
+      "tag": null
     },
     {
       "id": 11,
-      "title": "I \u2764\ufe0f Pets",
+      "title": "I ❤️ Pets",
       "pagesRead": 26,
       "totalPages": 143,
-      "progress": 0.1818181818,
-      "coverPath": "data/covers/cover-row-12.jpeg"
+      "coverPath": "data/covers/cover-row-12.jpeg",
+      "tag": null
     },
     {
       "id": 12,
       "title": "Fundraising Frenzy",
       "pagesRead": 56,
       "totalPages": 139,
-      "progress": 0.4028776978,
-      "coverPath": "data/covers/cover-row-13.jpeg"
+      "coverPath": "data/covers/cover-row-13.jpeg",
+      "tag": null
     },
     {
       "id": 13,
       "title": "Passion for Fashion",
       "pagesRead": 11,
       "totalPages": 143,
-      "progress": 0.07692307692,
-      "coverPath": "data/covers/cover-row-14.jpeg"
+      "coverPath": "data/covers/cover-row-14.jpeg",
+      "tag": null
     },
     {
       "id": 14,
       "title": "Ballet Backflip",
       "pagesRead": 29,
       "totalPages": 138,
-      "progress": 0.2101449275,
-      "coverPath": "data/covers/cover-row-15.jpeg"
+      "coverPath": "data/covers/cover-row-15.jpeg",
+      "tag": null
     },
     {
       "id": 15,
       "title": "Museum Mayhem",
       "pagesRead": 33,
       "totalPages": 143,
-      "progress": 0.2307692308,
-      "coverPath": "data/covers/cover-row-16.jpeg"
+      "coverPath": "data/covers/cover-row-16.jpeg",
+      "tag": null
     },
     {
       "id": 16,
       "title": "Spooky Suprise",
       "pagesRead": 135,
       "totalPages": 143,
-      "progress": 0.9440559441,
-      "coverPath": "data/covers/cover-row-17.jpeg"
+      "coverPath": "data/covers/cover-row-17.jpeg",
+      "tag": null
     },
     {
       "id": 17,
       "title": "Double Dare You",
       "pagesRead": 1,
       "totalPages": 127,
-      "progress": 0.007874015748,
-      "coverPath": "data/covers/cover-row-18.jpeg"
+      "coverPath": "data/covers/cover-row-18.jpeg",
+      "tag": null
     },
     {
       "id": 18,
       "title": "Christmas Chaos",
       "pagesRead": 26,
       "totalPages": 143,
-      "progress": 0.1818181818,
-      "coverPath": "data/covers/cover-row-19.jpeg"
+      "coverPath": "data/covers/cover-row-19.jpeg",
+      "tag": "Christmas"
     },
     {
       "id": 19,
       "title": "Worst Camp Ever",
       "pagesRead": 16,
       "totalPages": 143,
-      "progress": 0.1118881119,
-      "coverPath": "data/covers/cover-row-20.jpeg"
+      "coverPath": "data/covers/cover-row-20.jpeg",
+      "tag": "Camp"
     },
     {
       "id": 20,
       "title": "Goal Power",
       "pagesRead": 36,
       "totalPages": 143,
-      "progress": 0.2517482517,
-      "coverPath": "data/covers/cover-row-21.jpeg"
+      "coverPath": "data/covers/cover-row-21.jpeg",
+      "tag": null
     },
     {
       "id": 21,
       "title": "The Super Secret Club",
       "pagesRead": 19,
       "totalPages": 141,
-      "progress": 0.134751773,
-      "coverPath": "data/covers/cover-row-22.jpeg"
+      "coverPath": "data/covers/cover-row-22.jpeg",
+      "tag": null
     },
     {
       "id": 22,
       "title": "Diary Disaster",
       "pagesRead": 21,
       "totalPages": 140,
-      "progress": 0.15,
-      "coverPath": "data/covers/cover-row-23.jpeg"
+      "coverPath": "data/covers/cover-row-23.jpeg",
+      "tag": "Diary"
     },
     {
       "id": 23,
       "title": "Gym Squad Tumble",
       "pagesRead": 15,
       "totalPages": 143,
-      "progress": 0.1048951049,
-      "coverPath": "data/covers/cover-row-24.jpeg"
+      "coverPath": "data/covers/cover-row-24.jpeg",
+      "tag": null
     },
     {
       "id": 24,
       "title": "Adventure Island",
       "pagesRead": 18,
       "totalPages": 138,
-      "progress": 0.1304347826,
-      "coverPath": "data/covers/cover-row-25.jpeg"
+      "coverPath": "data/covers/cover-row-25.jpeg",
+      "tag": null
     },
     {
       "id": 25,
       "title": "Winter Wonders (Super Special)",
       "pagesRead": 19,
       "totalPages": 189,
-      "progress": 0.1005291005,
-      "coverPath": "data/covers/cover-row-26.jpeg"
+      "coverPath": "data/covers/cover-row-26.jpeg",
+      "tag": "Super Special"
     },
     {
       "id": 26,
       "title": "Treasure Trail (Super Special)",
       "pagesRead": 20,
       "totalPages": 188,
-      "progress": 0.1063829787,
-      "coverPath": "data/covers/cover-row-27.jpeg"
+      "coverPath": "data/covers/cover-row-27.jpeg",
+      "tag": "Super Special"
     },
     {
       "id": 27,
       "title": "Sleepover Fail",
       "pagesRead": 0,
       "totalPages": 142,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-28.jpeg"
+      "coverPath": "data/covers/cover-row-28.jpeg",
+      "tag": null
     },
     {
       "id": 28,
       "title": "Netball Rules",
       "pagesRead": 33,
       "totalPages": 139,
-      "progress": 0.2374100719,
-      "coverPath": "data/covers/cover-row-29.jpeg"
+      "coverPath": "data/covers/cover-row-29.jpeg",
+      "tag": null
     },
     {
       "id": 29,
       "title": "Camp Goldrush",
       "pagesRead": 0,
       "totalPages": 141,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-30.jpeg"
+      "coverPath": "data/covers/cover-row-30.jpeg",
+      "tag": "Camp"
     },
     {
       "id": 30,
       "title": "Diva Drama",
       "pagesRead": 7,
       "totalPages": 143,
-      "progress": 0.04895104895,
-      "coverPath": "data/covers/cover-row-31.jpeg"
+      "coverPath": "data/covers/cover-row-31.jpeg",
+      "tag": null
     },
     {
       "id": 31,
       "title": "Total TV Drama",
       "pagesRead": 92,
       "totalPages": 142,
-      "progress": 0.6478873239,
-      "coverPath": "data/covers/cover-row-32.jpeg"
+      "coverPath": "data/covers/cover-row-32.jpeg",
+      "tag": null
     },
     {
       "id": 32,
       "title": "Friendship S.O.S",
       "pagesRead": 0,
       "totalPages": 143,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-33.jpeg"
+      "coverPath": "data/covers/cover-row-33.jpeg",
+      "tag": null
     },
     {
       "id": 33,
       "title": "Going Green",
       "pagesRead": 0,
       "totalPages": 143,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-34.jpeg"
+      "coverPath": "data/covers/cover-row-34.jpeg",
+      "tag": null
     },
     {
       "id": 34,
       "title": "Wildlife Resue",
       "pagesRead": 11,
       "totalPages": 143,
-      "progress": 0.07692307692,
-      "coverPath": "data/covers/cover-row-35.jpeg"
+      "coverPath": "data/covers/cover-row-35.jpeg",
+      "tag": null
     },
     {
       "id": 35,
       "title": "Popstar Power (Super Special)",
       "pagesRead": 0,
       "totalPages": 187,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-36.jpeg"
+      "coverPath": "data/covers/cover-row-36.jpeg",
+      "tag": "Super Special"
     },
     {
       "id": 36,
       "title": "Poopstar Power (Super Special)",
-      "pagesRead": 0,
+      "pagesRead": 187,
       "totalPages": 187,
-      "progress": 0,
-      "coverPath": "data/covers/cover-row-36.jpeg"
+      "coverPath": "data/covers/cover-row-36.jpeg",
+      "tag": "Super Special"
     }
   ],
   "dontHave": [
