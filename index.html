@@ -6,35 +6,20 @@
     <title>Izzy's Library</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
-  <body class="is-locked">
-    <div class="modal-backdrop" id="pinGate" aria-hidden="true">
-      <div class="modal pin-modal">
-        <div class="modal__header">
-          <h2>Enter PIN</h2>
+  <body>
+    <div class="top-panels">
+      <header class="hero hero--full">
+        <div class="hero__panel-box hero__logo-panel">
+          <div class="hero__brand">
+            <img class="hero__logo hero__logo--compact" src="logo.png" alt="Izzy's Library App logo" />
+          </div>
         </div>
-        <form id="pinForm">
-          <label>
-            <span>PIN code</span>
-            <input type="password" id="pinInput" inputmode="numeric" autocomplete="off" />
-          </label>
-          <p class="pin-error" id="pinError" role="status" aria-live="polite"></p>
-          <button type="submit" class="edit-save">Unlock library</button>
-        </form>
-      </div>
-    </div>
-    <div id="appContent">
-    <header class="hero">
-      <div class="hero__panel-box hero__logo-panel">
-        <div class="hero__brand">
-          <img class="hero__logo hero__logo--compact" src="logo.png" alt="Izzy's Library App logo" />
-        </div>
-      </div>
+      </header>
+
       <div class="hero__panel-box hero__stats-panel">
         <div class="hero__stats" id="stats"></div>
       </div>
-    </header>
 
-    <main>
       <div class="controls-wrap">
         <section class="controls">
           <label class="search">
@@ -69,6 +54,9 @@
         </section>
 
       </div>
+    </div>
+
+    <main>
 
       <section class="shelf">
         <div class="section-header">
@@ -92,7 +80,6 @@
       <p>❤️ Made with love by Isabelle and Dad ❤️</p>
     </footer>
 
-    </div>
     <script src="app.js" defer></script>
   </body>
 </html>

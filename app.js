@@ -10,14 +10,7 @@ const bookGrid = document.getElementById("bookGrid");
 const statsEl = document.getElementById("stats");
 const resultsCount = document.getElementById("resultsCount");
 const tagFilter = document.getElementById("tagFilter");
-const pinGate = document.getElementById("pinGate");
-const pinForm = document.getElementById("pinForm");
-const pinInput = document.getElementById("pinInput");
-const pinError = document.getElementById("pinError");
-const appContent = document.getElementById("appContent");
 const missingList = document.getElementById("missingList");
-const PIN_CODE = "1234";
-const PIN_UNLOCK_KEY = "izzyslibrary:pin-unlocked";
 const statusLabels = {
   reading: "Reading",
   finished: "Finished",
@@ -77,65 +70,6 @@ function renderMissing() {
       `;
     })
     .join("");
-}
-let appStarted = false;
-function unlockApp() {
-  if (appStarted) return;
-  appStarted = true;
-  if (pinGate) {
-    pinGate.hidden = true;
-    pinGate.setAttribute("aria-hidden", "true");
-  }
-  if (appContent) {
-    appContent.removeAttribute("aria-hidden");
-  }
-  document.body.classList.remove("is-locked");
-  init();
-}
-function lockApp() {
-  document.body.classList.add("is-locked");
-  if (pinGate) {
-    pinGate.hidden = false;
-    pinGate.setAttribute("aria-hidden", "false");
-  }
-  if (appContent) {
-    appContent.setAttribute("aria-hidden", "true");
-  }
-  if (pinInput) {
-    pinInput.focus();
-  }
-}
-function setupPinGate() {
-  if (!pinGate || !pinForm || !pinInput) {
-    unlockApp();
-    return;
-  }
-  const unlocked = localStorage.getItem(PIN_UNLOCK_KEY) === "true";
-  if (unlocked) {
-    unlockApp();
-    return;
-  }
-  lockApp();
-  pinForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const value = pinInput.value.trim();
-    if (value === PIN_CODE) {
-      localStorage.setItem(PIN_UNLOCK_KEY, "true");
-      if (pinError) pinError.textContent = "";
-      unlockApp();
-      return;
-    }
-    if (pinError) {
-      pinError.textContent = "Incorrect PIN. Try again.";
-    }
-    pinInput.value = "";
-    pinInput.focus();
-  });
-  pinInput.addEventListener("input", () => {
-    if (pinError && pinError.textContent) {
-      pinError.textContent = "";
-    }
-  });
 }
 async function fetchLibrary() {
   const response = await fetch("data/books.json");
@@ -327,4 +261,4 @@ async function init() {
     sortSelect.value = "title";
   }
 }
-setupPinGate();
+init();
