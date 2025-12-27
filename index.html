@@ -25,57 +25,57 @@
     <div id="appContent">
     <header class="hero">
       <div class="hero__content">
-        <p class="hero__eyebrow">Ella Diaries Collection</p>
-        <div class="hero__title-row">
-          <img class="hero__logo hero__logo--solo" src="logo.png" alt="Izzy's Library App logo" />
+        <div class="hero__brand">
+          <img class="hero__logo hero__logo--compact" src="logo.png" alt="Izzy's Library App logo" />
         </div>
+        <p class="hero__eyebrow">Ella Diaries Collection</p>
         <div class="hero__stats" id="stats"></div>
       </div>
       <div class="hero__panel"></div>
     </header>
 
     <main>
-      <section class="controls">
-        <div class="search-add">
+      <div class="controls-wrap">
+        <section class="controls">
           <label class="search">
             <span>Search titles</span>
             <input type="search" id="searchInput" placeholder="Type a title" />
           </label>
 
-          <section class="add-book add-book--inline">
-            <div class="section-header">
-              <h2>Add a Book</h2>
-              <p>Use the button to add a new title.</p>
-            </div>
-            <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
-          </section>
-        </div>
+          <label class="sort">
+            <span>Sort by</span>
+            <select id="sortSelect">
+              <option value="order">Series order</option>
+              <option value="progress">Progress</option>
+              <option value="title">Title</option>
+              <option value="pages">Pages read</option>
+            </select>
+          </label>
 
-        <label class="sort">
-          <span>Sort by</span>
-          <select id="sortSelect">
-            <option value="order">Series order</option>
-            <option value="progress">Progress</option>
-            <option value="title">Title</option>
-            <option value="pages">Pages read</option>
-          </select>
-        </label>
+          <label class="tag-filter">
+            <span>Filter by tag</span>
+            <select id="tagFilter">
+              <option value="all">All tags</option>
+            </select>
+          </label>
 
-        <label class="tag-filter">
-          <span>Filter by tag</span>
-          <select id="tagFilter">
-            <option value="all">All tags</option>
-          </select>
-        </label>
+          <div class="filters" id="statusFilters" role="group" aria-label="Filter books">
+            <button class="filter active" data-status="all">All</button>
+            <button class="filter" data-status="reading">Reading</button>
+            <button class="filter" data-status="finished">Finished</button>
+            <button class="filter" data-status="unstarted">Unstarted</button>
+            <button class="filter" data-status="unknown">Unknown</button>
+          </div>
+        </section>
 
-        <div class="filters" id="statusFilters" role="group" aria-label="Filter books">
-          <button class="filter active" data-status="all">All</button>
-          <button class="filter" data-status="reading">Reading</button>
-          <button class="filter" data-status="finished">Finished</button>
-          <button class="filter" data-status="unstarted">Unstarted</button>
-          <button class="filter" data-status="unknown">Unknown</button>
-        </div>
-      </section>
+        <section class="add-book add-book--sidebar">
+          <div class="section-header">
+            <h2>Add a Book</h2>
+            <p>Use the button to add a new title.</p>
+          </div>
+          <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
+        </section>
+      </div>
 
       <section class="shelf">
         <div class="section-header">
@@ -83,6 +83,21 @@
           <p id="resultsCount"></p>
         </div>
         <div class="book-grid" id="bookGrid"></div>
+      </section>
+
+      <section class="missing">
+        <div class="section-header">
+          <h2>Books I Don't Have</h2>
+          <p>Add titles to remember what to find next.</p>
+        </div>
+        <form class="missing-form" id="missingForm">
+          <label>
+            <span>Title</span>
+            <input type="text" id="missingInput" placeholder="Add a missing title" />
+          </label>
+          <button class="primary-button" type="submit">Add</button>
+        </form>
+        <div class="missing-list" id="missingList"></div>
       </section>
 
     </main>

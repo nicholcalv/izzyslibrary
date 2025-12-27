@@ -1,5 +1,6 @@
 ﻿const state = {
   books: [],
+  dontHave: [],
   query: "",
   status: "all",
   tag: "all",
@@ -25,6 +26,9 @@ const pinForm = document.getElementById("pinForm");
 const pinInput = document.getElementById("pinInput");
 const pinError = document.getElementById("pinError");
 const appContent = document.getElementById("appContent");
+const missingList = document.getElementById("missingList");
+const missingForm = document.getElementById("missingForm");
+const missingInput = document.getElementById("missingInput");
 
 const PIN_CODE = "1234";
 const PIN_UNLOCK_KEY = "izzyslibrary:pin-unlocked";
@@ -77,6 +81,27 @@ function escapeHtml(value) {
     .replaceAll("\"", "&quot;");
 }
 
+function renderMissing() {
+  if (!missingList) return;
+  if (!state.dontHave.length) {
+    missingList.innerHTML = "<p>No missing books yet.</p>";
+    return;
+  }
+  missingList.innerHTML = state.dontHave
+    .map((item) => {
+      const rawTitle = String(item.title || "");
+      const safeTitle = escapeHtml(rawTitle);
+      const encodedTitle = encodeURIComponent(rawTitle);
+      return `
+        <div class="missing-item">
+          <span>${safeTitle}</span>
+          <button type="button" data-title="${encodedTitle}">Remove</button>
+        </div>
+      `;
+    })
+    .join("");
+}
+
 function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -86,6 +111,7 @@ function readFileAsDataUrl(file) {
   });
 }
 
+const DATA_MODE = "local";
 const SUPABASE_URL = "https://rgxvmmipjfpcmwczntob.supabase.co";
 const SUPABASE_KEY = "sb_publishable_ypjv12e-XFfpekDuTyM_sw_o4trw1vp";
 const SUPABASE_TABLE = "books";
@@ -226,58 +252,127 @@ function setupPinGate() {
 }
 
 async function fetchLibrary() {
-  const rows = await supabaseFetch("?select=*&order=id.asc");
-  if (Array.isArray(rows) && rows.length > 0) {
-    return { have: rows.map(mapFromDb) };
-  }
-
-  const response = await fetch("data/books.json");
-  if (!response.ok) {
-    return { have: [] };
-  }
-  const data = await response.json();
-  const seedBooks = Array.isArray(data.have) ? data.have : [];
-  if (!seedBooks.length) {
-    return { have: [] };
-  }
-
-  const seedPayload = seedBooks.map((book) => {
-    const payload = mapToDb(book);
-    if (typeof book.id === "number") {
-      payload.id = book.id;
+  if (DATA_MODE === "supabase") {
+    const rows = await supabaseFetch("?select=*&order=id.asc");
+    if (Array.isArray(rows) && rows.length > 0) {
+      return { have: rows.map(mapFromDb) };
     }
-    return payload;
-  });
 
-  await supabaseFetch("", {
-    method: "POST",
-    headers: { Prefer: "return=minimal" },
-    body: JSON.stringify(seedPayload),
-  });
+    const response = await fetch("data/books.json");
+    if (!response.ok) {
+      return { have: [] };
+    }
+    const data = await response.json();
+    const seedBooks = Array.isArray(data.have) ? data.have : [];
+    if (!seedBooks.length) {
+      return { have: [] };
+    }
 
-  const seededRows = await supabaseFetch("?select=*&order=id.asc");
-  return { have: Array.isArray(seededRows) ? seededRows.map(mapFromDb) : [] };
+    await supabaseFetch("", {
+      method: "POST",
+      headers: { Prefer: "return=minimal" },
+      body: JSON.stringify(seedBooks.map(mapToDb)),
+    });
+
+    const seededRows = await supabaseFetch("?select=*&order=id.asc");
+    return { have: Array.isArray(seededRows) ? seededRows.map(mapFromDb) : [] };
+  }
+
+  const response = await fetch("/api/books");
+  if (response.ok) {
+    return response.json();
+  }
+
+  const fallback = await fetch("data/books.json");
+  if (!fallback.ok) {
+    return { have: [] };
+  }
+  return fallback.json();
 }
 
 async function createBook(book) {
-  const payload = mapToDb(book);
-  return supabaseFetch("", {
+  if (DATA_MODE === "supabase") {
+    const payload = mapToDb(book);
+    return supabaseFetch("", {
+      method: "POST",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(payload),
+    });
+  }
+
+  const response = await fetch("/api/books", {
     method: "POST",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify(payload),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(book),
   });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Failed to save book.");
+  }
+  return response.json();
 }
 
 async function updateBookDetails(id, payload) {
-  const update = mapUpdatePayload(payload);
-  if (!Object.keys(update).length) {
-    return null;
+  if (DATA_MODE === "supabase") {
+    const update = mapUpdatePayload(payload);
+    if (!Object.keys(update).length) {
+      return null;
+    }
+    return supabaseFetch(`?id=eq.${id}`, {
+      method: "PATCH",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(update),
+    });
   }
-  return supabaseFetch(`?id=eq.${id}`, {
-    method: "PATCH",
-    headers: { Prefer: "return=representation" },
-    body: JSON.stringify(update),
+
+  const response = await fetch(`/api/books/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
   });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Failed to update book.");
+  }
+  return response.json();
+}
+
+async function createMissingTitle(title) {
+  if (!title) return;
+  if (DATA_MODE === "supabase") {
+    throw new Error("Missing list is not configured for Supabase.");
+  }
+  const response = await fetch("/api/missing", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ title }),
+  });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Failed to add missing book.");
+  }
+  return response.json();
+}
+
+async function deleteMissingTitle(title) {
+  if (!title) return;
+  if (DATA_MODE === "supabase") {
+    throw new Error("Missing list is not configured for Supabase.");
+  }
+  const response = await fetch(`/api/missing?title=${encodeURIComponent(title)}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Failed to remove missing book.");
+  }
+  return response.json();
 }
 
 function renderStats() {
@@ -550,9 +645,11 @@ function attachEvents() {
       await updateBookDetails(id, payload);
       const data = await fetchLibrary();
       state.books = data.have || [];
+      state.dontHave = data.dontHave || [];
       renderStats();
       renderTagFilter();
       renderBooks();
+      renderMissing();
       editBackdrop.hidden = true;
     } catch (error) {
       alert(error.message || "Could not update book details.");
@@ -603,10 +700,12 @@ function attachEvents() {
       await createBook(newBook);
       const data = await fetchLibrary();
       state.books = data.have || [];
+      state.dontHave = data.dontHave || [];
       addForm.reset();
       renderStats();
       renderTagFilter();
       renderBooks();
+      renderMissing();
       if (addBackdrop) {
         addBackdrop.hidden = true;
       }
@@ -614,20 +713,55 @@ function attachEvents() {
       alert(error.message || "Could not save the book.");
     }
   });
+
+  if (missingForm && missingInput) {
+    missingForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const title = missingInput.value.trim();
+      if (!title) return;
+      try {
+        await createMissingTitle(title);
+        const data = await fetchLibrary();
+        state.dontHave = data.dontHave || [];
+        missingInput.value = "";
+        renderMissing();
+      } catch (error) {
+        alert(error.message || "Could not add missing book.");
+      }
+    });
+  }
+
+  if (missingList) {
+    missingList.addEventListener("click", async (event) => {
+      if (!event.target.matches("button[data-title]")) return;
+      const title = decodeURIComponent(event.target.dataset.title || "");
+      try {
+        await deleteMissingTitle(title);
+        const data = await fetchLibrary();
+        state.dontHave = data.dontHave || [];
+        renderMissing();
+      } catch (error) {
+        alert(error.message || "Could not remove missing book.");
+      }
+    });
+  }
 }
 
 async function init() {
   try {
     const data = await fetchLibrary();
     state.books = data.have || [];
+    state.dontHave = data.dontHave || [];
   } catch (error) {
     state.books = [];
+    state.dontHave = [];
     alert("Could not load library data.");
   }
 
   renderStats();
   renderTagFilter();
   renderBooks();
+  renderMissing();
   attachEvents();
 
   const sortSelect = document.getElementById("sortSelect");

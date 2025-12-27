@@ -190,6 +190,21 @@ def delete_missing_title(title):
     return deleted
 
 
+def insert_missing_title(title):
+    clean_title = title.strip()
+    if not clean_title:
+        raise ValueError("Title is required.")
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.execute(
+        "INSERT OR IGNORE INTO dont_have (title) VALUES (?)",
+        (clean_title,),
+    )
+    conn.commit()
+    inserted = cur.rowcount
+    conn.close()
+    return inserted
+
+
 def update_book_details(book_id, title, pages_read, tag, cover_path):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -267,6 +282,29 @@ class LibraryHandler(SimpleHTTPRequestHandler):
                 return
 
             response = json.dumps({"id": book_id}).encode("utf-8")
+            self.send_response(201)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(response)))
+            self.end_headers()
+            self.wfile.write(response)
+            return
+
+        if self.path.startswith("/api/missing"):
+            length = int(self.headers.get("Content-Length", 0))
+            raw = self.rfile.read(length)
+            try:
+                payload = json.loads(raw.decode("utf-8"))
+                inserted = insert_missing_title(str(payload.get("title") or ""))
+            except (json.JSONDecodeError, ValueError) as exc:
+                message = json.dumps({"error": str(exc)}).encode("utf-8")
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(message)))
+                self.end_headers()
+                self.wfile.write(message)
+                return
+
+            response = json.dumps({"inserted": inserted}).encode("utf-8")
             self.send_response(201)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(response)))
