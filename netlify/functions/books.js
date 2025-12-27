@@ -1,12 +1,12 @@
 const { Pool } = require("pg");
 
-const databaseUrl = process.env.DATABASE_URL;
+const databaseUrl = process.env.NETLIFY_DATABASE_URL;
 
 if (!databaseUrl) {
   exports.handler = async () => ({
     statusCode: 500,
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ error: "DATABASE_URL is not set." }),
+    body: JSON.stringify({ error: "NETLIFY_DATABASE_URL is not set." }),
   });
 } else {
   const pool = new Pool({
