@@ -24,14 +24,14 @@
     </div>
     <div id="appContent">
     <header class="hero">
-      <div class="hero__content">
+      <div class="hero__panel-box hero__logo-panel">
         <div class="hero__brand">
           <img class="hero__logo hero__logo--compact" src="logo.png" alt="Izzy's Library App logo" />
         </div>
-        <p class="hero__eyebrow">Ella Diaries Collection</p>
+      </div>
+      <div class="hero__panel-box hero__stats-panel">
         <div class="hero__stats" id="stats"></div>
       </div>
-      <div class="hero__panel"></div>
     </header>
 
     <main>
@@ -68,13 +68,9 @@
           </div>
         </section>
 
-        <section class="add-book add-book--sidebar">
-          <div class="section-header">
-            <h2>Add a Book</h2>
-            <p>Use the button to add a new title.</p>
-          </div>
-          <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
-        </section>
+        <button class="primary-button floating-add" id="openAddBook" type="button" aria-label="Add a book">
+          Add a Book
+        </button>
       </div>
 
       <section class="shelf">
@@ -125,7 +121,10 @@
             <span>Pages read</span>
             <input type="number" id="editPages" min="0" />
           </label>
-          <button type="submit" class="edit-save">Save</button>
+          <div class="edit-actions">
+            <button type="submit" class="edit-save">Save</button>
+            <button type="button" class="delete-button" id="deleteBook">Delete</button>
+          </div>
         </form>
       </div>
     </div>

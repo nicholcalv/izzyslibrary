@@ -205,6 +205,15 @@ def insert_missing_title(title):
     return inserted
 
 
+def delete_book(book_id):
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.execute("DELETE FROM books WHERE id = ?", (book_id,))
+    conn.commit()
+    deleted = cur.rowcount
+    conn.close()
+    return deleted
+
+
 def update_book_details(book_id, title, pages_read, tag, cover_path):
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
@@ -332,6 +341,41 @@ class LibraryHandler(SimpleHTTPRequestHandler):
             deleted = delete_missing_title(title)
             response = json.dumps({"deleted": deleted}).encode("utf-8")
             self.send_response(200)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Content-Length", str(len(response)))
+            self.end_headers()
+            self.wfile.write(response)
+            return
+
+        if self.path.startswith("/api/books"):
+            parsed = urlparse(self.path)
+            parts = parsed.path.strip("/").split("/")
+            book_id = None
+            if len(parts) == 3 and parts[2].isdigit():
+                book_id = int(parts[2])
+            else:
+                query = parse_qs(parsed.query)
+                raw_id = (query.get("id") or [""])[0]
+                if raw_id.isdigit():
+                    book_id = int(raw_id)
+
+            if book_id is None:
+                message = json.dumps({"error": "Valid book id is required."}).encode("utf-8")
+                self.send_response(400)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(message)))
+                self.end_headers()
+                self.wfile.write(message)
+                return
+
+            deleted = delete_book(book_id)
+            if deleted:
+                response = json.dumps({"deleted": deleted}).encode("utf-8")
+                status = 200
+            else:
+                response = json.dumps({"error": "Book not found."}).encode("utf-8")
+                status = 404
+            self.send_response(status)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(response)))
             self.end_headers()

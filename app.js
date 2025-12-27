@@ -17,6 +17,7 @@ const editTitle = document.getElementById("editTitle");
 const editTag = document.getElementById("editTag");
 const editCover = document.getElementById("editCover");
 const editPages = document.getElementById("editPages");
+const deleteBookBtn = document.getElementById("deleteBook");
 const addBackdrop = document.getElementById("addBackdrop");
 const addClose = document.getElementById("addClose");
 const openAddBook = document.getElementById("openAddBook");
@@ -195,6 +196,27 @@ async function updateBookDetails(id, payload) {
   if (!response.ok) {
     const message = await response.text();
     throw new Error(message || "Failed to update book.");
+  }
+  return response.json();
+}
+async function deleteBook(id) {
+  const response = await fetch(`/api/books/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) {
+    const contentType = response.headers.get("Content-Type") || "";
+    let message = "";
+    if (contentType.includes("application/json")) {
+      try {
+        const data = await response.json();
+        message = data.error || data.message || JSON.stringify(data);
+      } catch (error) {
+        message = "";
+      }
+    } else {
+      message = await response.text();
+    }
+    throw new Error(message || "Failed to delete book.");
   }
   return response.json();
 }
@@ -477,6 +499,30 @@ function attachEvents() {
       alert(error.message || "Could not update book details.");
     }
   });
+  if (deleteBookBtn) {
+    deleteBookBtn.addEventListener("click", async () => {
+      const id = Number(editForm.dataset.bookId);
+      if (!id) return;
+      const titleValue = editTitle.value.trim();
+      const confirmed = window.confirm(
+        `Delete "${titleValue || "this book"}"? This cannot be undone.`
+      );
+      if (!confirmed) return;
+      try {
+        await deleteBook(id);
+        const data = await fetchLibrary();
+        state.books = data.have || [];
+        state.dontHave = data.dontHave || [];
+        renderStats();
+        renderTagFilter();
+        renderBooks();
+        renderMissing();
+        editBackdrop.hidden = true;
+      } catch (error) {
+        alert(error.message || "Could not delete the book.");
+      }
+    });
+  }
   const addForm = document.getElementById("addBookForm");
   addForm.addEventListener("submit", async (event) => {
     event.preventDefault();
