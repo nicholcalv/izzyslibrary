@@ -36,10 +36,20 @@
 
     <main>
       <section class="controls">
-        <label class="search">
-          <span>Search titles</span>
-          <input type="search" id="searchInput" placeholder="Type a title" />
-        </label>
+        <div class="search-add">
+          <label class="search">
+            <span>Search titles</span>
+            <input type="search" id="searchInput" placeholder="Type a title" />
+          </label>
+
+          <section class="add-book add-book--inline">
+            <div class="section-header">
+              <h2>Add a Book</h2>
+              <p>Use the button to add a new title.</p>
+            </div>
+            <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
+          </section>
+        </div>
 
         <label class="sort">
           <span>Sort by</span>
@@ -65,14 +75,6 @@
           <button class="filter" data-status="unstarted">Unstarted</button>
           <button class="filter" data-status="unknown">Unknown</button>
         </div>
-      </section>
-
-      <section class="add-book">
-        <div class="section-header">
-          <h2>Add a Book</h2>
-          <p>Use the button to add a new title.</p>
-        </div>
-        <button class="primary-button" id="openAddBook" type="button">Add a Book</button>
       </section>
 
       <section class="shelf">
