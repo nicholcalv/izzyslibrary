@@ -14,7 +14,7 @@
       "pagesRead": 32,
       "totalPages": 143,
       "coverPath": "data/covers/cover-row-3.jpeg",
-      "tag": null
+      "tag": "Animals"
     },
     {
       "id": 3,
@@ -46,7 +46,7 @@
       "pagesRead": 10,
       "totalPages": 143,
       "coverPath": "data/covers/cover-row-7.jpeg",
-      "tag": "Super Special"
+      "tag": "Super Special, Sports"
     },
     {
       "id": 7,
@@ -110,7 +110,7 @@
       "pagesRead": 29,
       "totalPages": 138,
       "coverPath": "data/covers/cover-row-15.jpeg",
-      "tag": null
+      "tag": "Sport"
     },
     {
       "id": 15,
@@ -158,7 +158,7 @@
       "pagesRead": 36,
       "totalPages": 143,
       "coverPath": "data/covers/cover-row-21.jpeg",
-      "tag": null
+      "tag": "Sport"
     },
     {
       "id": 21,
@@ -222,7 +222,7 @@
       "pagesRead": 33,
       "totalPages": 139,
       "coverPath": "data/covers/cover-row-29.jpeg",
-      "tag": null
+      "tag": "Sport"
     },
     {
       "id": 29,
@@ -276,14 +276,6 @@
       "id": 35,
       "title": "Popstar Power (Super Special)",
       "pagesRead": 0,
-      "totalPages": 187,
-      "coverPath": "data/covers/cover-row-36.jpeg",
-      "tag": "Super Special"
-    },
-    {
-      "id": 36,
-      "title": "Poopstar Power (Super Special)",
-      "pagesRead": 187,
       "totalPages": 187,
       "coverPath": "data/covers/cover-row-36.jpeg",
       "tag": "Super Special"
