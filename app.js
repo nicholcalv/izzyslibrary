@@ -108,8 +108,17 @@ async function supabaseFetch(path, options = {}) {
     },
   });
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Supabase request failed.");
+    let message = `Supabase request failed (${response.status}).`;
+    const text = await response.text();
+    if (text) {
+      try {
+        const parsed = JSON.parse(text);
+        message = parsed.message || parsed.error || message;
+      } catch (error) {
+        message = text;
+      }
+    }
+    throw new Error(message);
   }
   if (response.status === 204) return null;
   return response.json();
@@ -546,7 +555,7 @@ function attachEvents() {
       renderBooks();
       editBackdrop.hidden = true;
     } catch (error) {
-      alert("Could not update book details.");
+      alert(error.message || "Could not update book details.");
     }
   });
 
@@ -602,7 +611,7 @@ function attachEvents() {
         addBackdrop.hidden = true;
       }
     } catch (error) {
-      alert("Could not save the book. Is the server running?");
+      alert(error.message || "Could not save the book.");
     }
   });
 }
