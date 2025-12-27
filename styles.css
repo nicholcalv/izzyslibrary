@@ -28,6 +28,12 @@ body {
   min-height: 100vh;
 }
 
+body.is-locked #appContent {
+  filter: blur(10px);
+  pointer-events: none;
+  user-select: none;
+}
+
 h1,
 h2 {
   font-family: var(--font-display);
@@ -69,8 +75,8 @@ header.hero {
 .hero__title-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
+  gap: 0;
 }
 
 .hero__title-row h1 {
@@ -78,9 +84,16 @@ header.hero {
 }
 
 .hero__logo {
-  width: min(200px, 45vw);
+  display: block;
+  width: 768px;
+  max-width: 90vw;
   height: auto;
   filter: drop-shadow(0 12px 20px rgba(20, 10, 10, 0.3));
+}
+
+.hero__logo--solo {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero__content h1 {
@@ -334,6 +347,21 @@ main {
 
 .modal-backdrop[hidden] {
   display: none;
+}
+
+#pinGate {
+  z-index: 20;
+}
+
+.pin-modal {
+  width: min(360px, 92vw);
+}
+
+.pin-error {
+  margin: 0;
+  color: #a6442b;
+  font-size: 0.85rem;
+  min-height: 1.2em;
 }
 
 .modal {

@@ -20,6 +20,14 @@ const editPages = document.getElementById("editPages");
 const addBackdrop = document.getElementById("addBackdrop");
 const addClose = document.getElementById("addClose");
 const openAddBook = document.getElementById("openAddBook");
+const pinGate = document.getElementById("pinGate");
+const pinForm = document.getElementById("pinForm");
+const pinInput = document.getElementById("pinInput");
+const pinError = document.getElementById("pinError");
+const appContent = document.getElementById("appContent");
+
+const PIN_CODE = "1234";
+const PIN_UNLOCK_KEY = "izzyslibrary:pin-unlocked";
 
 const statusLabels = {
   reading: "Reading",
@@ -78,62 +86,189 @@ function readFileAsDataUrl(file) {
   });
 }
 
-const STORAGE_KEY = "izzyslibrary:books";
+const SUPABASE_URL = "https://rgxvmmipjfpcmwczntob.supabase.co";
+const SUPABASE_KEY = "sb_publishable_ypjv12e-XFfpekDuTyM_sw_o4trw1vp";
+const SUPABASE_TABLE = "books";
 
-function readStoredBooks() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const data = JSON.parse(raw);
-    if (!data || !Array.isArray(data.have)) return null;
-    return data;
-  } catch (error) {
-    return null;
+function supabaseHeaders(extra = {}) {
+  return {
+    apikey: SUPABASE_KEY,
+    Authorization: `Bearer ${SUPABASE_KEY}`,
+    "Content-Type": "application/json",
+    ...extra,
+  };
+}
+
+async function supabaseFetch(path, options = {}) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}${path}`, {
+    ...options,
+    headers: {
+      ...supabaseHeaders(),
+      ...(options.headers || {}),
+    },
+  });
+  if (!response.ok) {
+    const message = await response.text();
+    throw new Error(message || "Supabase request failed.");
+  }
+  if (response.status === 204) return null;
+  return response.json();
+}
+
+function mapFromDb(row) {
+  return {
+    id: row.id,
+    title: row.title || "",
+    pagesRead: row.pages_read ?? null,
+    totalPages: row.total_pages ?? null,
+    progress: row.progress ?? null,
+    coverPath: row.cover_path ?? null,
+    tag: row.tag ?? null,
+  };
+}
+
+function mapToDb(book) {
+  return {
+    title: book.title,
+    pages_read: book.pagesRead ?? null,
+    total_pages: book.totalPages ?? null,
+    progress: book.progress ?? null,
+    cover_path: book.coverPath ?? null,
+    tag: book.tag ?? null,
+  };
+}
+
+function mapUpdatePayload(payload) {
+  const update = {};
+  if ("title" in payload) update.title = payload.title;
+  if ("pagesRead" in payload) update.pages_read = payload.pagesRead;
+  if ("totalPages" in payload) update.total_pages = payload.totalPages;
+  if ("progress" in payload) update.progress = payload.progress;
+  if ("coverPath" in payload) update.cover_path = payload.coverPath;
+  if ("tag" in payload) update.tag = payload.tag;
+  return update;
+}
+
+let appStarted = false;
+
+function unlockApp() {
+  if (appStarted) return;
+  appStarted = true;
+  if (pinGate) {
+    pinGate.hidden = true;
+    pinGate.setAttribute("aria-hidden", "true");
+  }
+  if (appContent) {
+    appContent.removeAttribute("aria-hidden");
+  }
+  document.body.classList.remove("is-locked");
+  init();
+}
+
+function lockApp() {
+  document.body.classList.add("is-locked");
+  if (pinGate) {
+    pinGate.hidden = false;
+    pinGate.setAttribute("aria-hidden", "false");
+  }
+  if (appContent) {
+    appContent.setAttribute("aria-hidden", "true");
+  }
+  if (pinInput) {
+    pinInput.focus();
   }
 }
 
-function writeStoredBooks(books) {
-  const payload = { have: books };
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+function setupPinGate() {
+  if (!pinGate || !pinForm || !pinInput) {
+    unlockApp();
+    return;
+  }
+
+  const unlocked = localStorage.getItem(PIN_UNLOCK_KEY) === "true";
+  if (unlocked) {
+    unlockApp();
+    return;
+  }
+
+  lockApp();
+
+  pinForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const value = pinInput.value.trim();
+    if (value === PIN_CODE) {
+      localStorage.setItem(PIN_UNLOCK_KEY, "true");
+      if (pinError) pinError.textContent = "";
+      unlockApp();
+      return;
+    }
+    if (pinError) {
+      pinError.textContent = "Incorrect PIN. Try again.";
+    }
+    pinInput.value = "";
+    pinInput.focus();
+  });
+
+  pinInput.addEventListener("input", () => {
+    if (pinError && pinError.textContent) {
+      pinError.textContent = "";
+    }
+  });
 }
 
 async function fetchLibrary() {
-  const stored = readStoredBooks();
-  if (stored) return stored;
+  const rows = await supabaseFetch("?select=*&order=id.asc");
+  if (Array.isArray(rows) && rows.length > 0) {
+    return { have: rows.map(mapFromDb) };
+  }
+
   const response = await fetch("data/books.json");
   if (!response.ok) {
-    throw new Error("Failed to load library data.");
+    return { have: [] };
   }
   const data = await response.json();
-  return data;
+  const seedBooks = Array.isArray(data.have) ? data.have : [];
+  if (!seedBooks.length) {
+    return { have: [] };
+  }
+
+  const seedPayload = seedBooks.map((book) => {
+    const payload = mapToDb(book);
+    if (typeof book.id === "number") {
+      payload.id = book.id;
+    }
+    return payload;
+  });
+
+  await supabaseFetch("", {
+    method: "POST",
+    headers: { Prefer: "return=minimal" },
+    body: JSON.stringify(seedPayload),
+  });
+
+  const seededRows = await supabaseFetch("?select=*&order=id.asc");
+  return { have: Array.isArray(seededRows) ? seededRows.map(mapFromDb) : [] };
 }
 
 async function createBook(book) {
-  const books = Array.isArray(state.books) ? [...state.books] : [];
-  const nextId =
-    books.reduce((max, item) => (typeof item.id === "number" ? Math.max(max, item.id) : max), 0) +
-    1;
-  const newBook = {
-    id: nextId,
-    ...book,
-  };
-  books.push(newBook);
-  writeStoredBooks(books);
-  return { have: books };
+  const payload = mapToDb(book);
+  return supabaseFetch("", {
+    method: "POST",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(payload),
+  });
 }
 
 async function updateBookDetails(id, payload) {
-  const books = Array.isArray(state.books) ? [...state.books] : [];
-  const index = books.findIndex((book) => book.id === id);
-  if (index === -1) {
-    throw new Error("Book not found.");
+  const update = mapUpdatePayload(payload);
+  if (!Object.keys(update).length) {
+    return null;
   }
-  books[index] = {
-    ...books[index],
-    ...payload,
-  };
-  writeStoredBooks(books);
-  return { have: books };
+  return supabaseFetch(`?id=eq.${id}`, {
+    method: "PATCH",
+    headers: { Prefer: "return=representation" },
+    body: JSON.stringify(update),
+  });
 }
 
 function renderStats() {
@@ -473,8 +608,13 @@ function attachEvents() {
 }
 
 async function init() {
-  const data = await fetchLibrary();
-  state.books = data.have || [];
+  try {
+    const data = await fetchLibrary();
+    state.books = data.have || [];
+  } catch (error) {
+    state.books = [];
+    alert("Could not load library data.");
+  }
 
   renderStats();
   renderTagFilter();
@@ -487,4 +627,4 @@ async function init() {
   }
 }
 
-init();
+setupPinGate();
