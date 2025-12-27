@@ -10,25 +10,12 @@ const bookGrid = document.getElementById("bookGrid");
 const statsEl = document.getElementById("stats");
 const resultsCount = document.getElementById("resultsCount");
 const tagFilter = document.getElementById("tagFilter");
-const editBackdrop = document.getElementById("editBackdrop");
-const editClose = document.getElementById("editClose");
-const editForm = document.getElementById("editForm");
-const editTitle = document.getElementById("editTitle");
-const editTag = document.getElementById("editTag");
-const editCover = document.getElementById("editCover");
-const editPages = document.getElementById("editPages");
-const deleteBookBtn = document.getElementById("deleteBook");
-const addBackdrop = document.getElementById("addBackdrop");
-const addClose = document.getElementById("addClose");
-const openAddBook = document.getElementById("openAddBook");
 const pinGate = document.getElementById("pinGate");
 const pinForm = document.getElementById("pinForm");
 const pinInput = document.getElementById("pinInput");
 const pinError = document.getElementById("pinError");
 const appContent = document.getElementById("appContent");
 const missingList = document.getElementById("missingList");
-const missingForm = document.getElementById("missingForm");
-const missingInput = document.getElementById("missingInput");
 const PIN_CODE = "1234";
 const PIN_UNLOCK_KEY = "izzyslibrary:pin-unlocked";
 const statusLabels = {
@@ -83,23 +70,13 @@ function renderMissing() {
     .map((item) => {
       const rawTitle = String(item.title || "");
       const safeTitle = escapeHtml(rawTitle);
-      const encodedTitle = encodeURIComponent(rawTitle);
       return `
         <div class="missing-item">
           <span>${safeTitle}</span>
-          <button type="button" data-title="${encodedTitle}">Remove</button>
         </div>
       `;
     })
     .join("");
-}
-function readFileAsDataUrl(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result);
-    reader.onerror = () => reject(new Error("Failed to read file."));
-    reader.readAsDataURL(file);
-  });
 }
 let appStarted = false;
 function unlockApp() {
@@ -161,88 +138,9 @@ function setupPinGate() {
   });
 }
 async function fetchLibrary() {
-  const response = await fetch("/api/books");
-  if (response.ok) {
-    return response.json();
-  }
-  const fallback = await fetch("data/books.json");
-  if (!fallback.ok) {
+  const response = await fetch("data/books.json");
+  if (!response.ok) {
     return { have: [], dontHave: [] };
-  }
-  return fallback.json();
-}
-async function createBook(book) {
-  const response = await fetch("/api/books", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(book),
-  });
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Failed to save book.");
-  }
-  return response.json();
-}
-async function updateBookDetails(id, payload) {
-  const response = await fetch(`/api/books/${id}`, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Failed to update book.");
-  }
-  return response.json();
-}
-async function deleteBook(id) {
-  const response = await fetch(`/api/books/${id}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    const contentType = response.headers.get("Content-Type") || "";
-    let message = "";
-    if (contentType.includes("application/json")) {
-      try {
-        const data = await response.json();
-        message = data.error || data.message || JSON.stringify(data);
-      } catch (error) {
-        message = "";
-      }
-    } else {
-      message = await response.text();
-    }
-    throw new Error(message || "Failed to delete book.");
-  }
-  return response.json();
-}
-async function createMissingTitle(title) {
-  if (!title) return;
-  const response = await fetch("/api/missing", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ title }),
-  });
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Failed to add missing book.");
-  }
-  return response.json();
-}
-async function deleteMissingTitle(title) {
-  if (!title) return;
-  const response = await fetch(`/api/missing?title=${encodeURIComponent(title)}`, {
-    method: "DELETE",
-  });
-  if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || "Failed to remove missing book.");
   }
   return response.json();
 }
@@ -408,203 +306,6 @@ function attachEvents() {
       setStatusFilter(event.target);
     }
   });
-  bookGrid.addEventListener("click", async (event) => {
-    if (event.target.matches(".book-title")) {
-      const card = event.target.closest(".book-card");
-      if (!card) return;
-      const id = Number(card.dataset.id);
-      const book = state.books.find((item) => item.id === id);
-      if (!book) return;
-      editForm.dataset.bookId = String(id);
-      editTitle.value = book.title || "";
-      editTag.value = book.tag || "";
-      editCover.value = "";
-      editPages.value = typeof book.pagesRead === "number" ? book.pagesRead : "";
-      editBackdrop.hidden = false;
-    }
-  });
-  editClose.addEventListener("click", () => {
-    editBackdrop.hidden = true;
-  });
-  editBackdrop.addEventListener("click", (event) => {
-    if (event.target === editBackdrop) {
-      editBackdrop.hidden = true;
-    }
-  });
-  if (openAddBook) {
-    openAddBook.addEventListener("click", () => {
-      addBackdrop.hidden = false;
-    });
-  }
-  if (addClose) {
-    addClose.addEventListener("click", () => {
-      addBackdrop.hidden = true;
-    });
-  }
-  if (addBackdrop) {
-    addBackdrop.addEventListener("click", (event) => {
-      if (event.target === addBackdrop) {
-        addBackdrop.hidden = true;
-      }
-    });
-  }
-  editForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const id = Number(editForm.dataset.bookId);
-    if (!id) return;
-    const titleValue = editTitle.value.trim();
-    const tagValue = editTag.value.trim();
-    const rawValue = editPages.value;
-    const coverFile = editCover.files && editCover.files[0];
-    if (!titleValue) {
-      alert("Title is required.");
-      return;
-    }
-    const pagesRead = rawValue === "" ? null : Number(rawValue);
-    if (pagesRead !== null && Number.isNaN(pagesRead)) {
-      alert("Pages read must be a number.");
-      return;
-    }
-    if (typeof pagesRead === "number" && pagesRead < 0) {
-      alert("Pages read cannot be negative.");
-      return;
-    }
-    try {
-      let coverPath = null;
-      if (coverFile) {
-        try {
-          coverPath = await readFileAsDataUrl(coverFile);
-        } catch (error) {
-          coverPath = null;
-        }
-      }
-      const payload = {
-        title: titleValue,
-        pagesRead,
-        tag: tagValue || null,
-      };
-      if (coverPath) {
-        payload.coverPath = coverPath;
-      }
-      await updateBookDetails(id, payload);
-      const data = await fetchLibrary();
-      state.books = data.have || [];
-      state.dontHave = data.dontHave || [];
-      renderStats();
-      renderTagFilter();
-      renderBooks();
-      renderMissing();
-      editBackdrop.hidden = true;
-    } catch (error) {
-      alert(error.message || "Could not update book details.");
-    }
-  });
-  if (deleteBookBtn) {
-    deleteBookBtn.addEventListener("click", async () => {
-      const id = Number(editForm.dataset.bookId);
-      if (!id) return;
-      const titleValue = editTitle.value.trim();
-      const confirmed = window.confirm(
-        `Delete "${titleValue || "this book"}"? This cannot be undone.`
-      );
-      if (!confirmed) return;
-      try {
-        await deleteBook(id);
-        const data = await fetchLibrary();
-        state.books = data.have || [];
-        state.dontHave = data.dontHave || [];
-        renderStats();
-        renderTagFilter();
-        renderBooks();
-        renderMissing();
-        editBackdrop.hidden = true;
-      } catch (error) {
-        alert(error.message || "Could not delete the book.");
-      }
-    });
-  }
-  const addForm = document.getElementById("addBookForm");
-  addForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const formData = new FormData(addForm);
-    const title = String(formData.get("title") || "").trim();
-    const pagesReadRaw = formData.get("pagesRead");
-    const totalPagesRaw = formData.get("totalPages");
-    const tagValue = String(formData.get("tag") || "").trim();
-    const coverFile = formData.get("coverFile");
-    if (!title) return;
-    const pagesRead = pagesReadRaw === "" ? null : Number(pagesReadRaw);
-    const totalPages = totalPagesRaw === "" ? null : Number(totalPagesRaw);
-    const progress =
-      typeof pagesRead === "number" &&
-      !Number.isNaN(pagesRead) &&
-      typeof totalPages === "number" &&
-      totalPages > 0
-        ? pagesRead / totalPages
-        : null;
-    let coverPath = null;
-    if (coverFile && coverFile instanceof File && coverFile.size > 0) {
-      try {
-        coverPath = await readFileAsDataUrl(coverFile);
-      } catch (error) {
-        coverPath = null;
-      }
-    }
-    const newBook = {
-      title,
-      pagesRead: Number.isNaN(pagesRead) ? null : pagesRead,
-      totalPages: Number.isNaN(totalPages) ? null : totalPages,
-      progress,
-      coverPath,
-      tag: tagValue || null,
-    };
-    try {
-      await createBook(newBook);
-      const data = await fetchLibrary();
-      state.books = data.have || [];
-      state.dontHave = data.dontHave || [];
-      addForm.reset();
-      renderStats();
-      renderTagFilter();
-      renderBooks();
-      renderMissing();
-      if (addBackdrop) {
-        addBackdrop.hidden = true;
-      }
-    } catch (error) {
-      alert(error.message || "Could not save the book.");
-    }
-  });
-  if (missingForm && missingInput) {
-    missingForm.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      const title = missingInput.value.trim();
-      if (!title) return;
-      try {
-        await createMissingTitle(title);
-        const data = await fetchLibrary();
-        state.dontHave = data.dontHave || [];
-        missingInput.value = "";
-        renderMissing();
-      } catch (error) {
-        alert(error.message || "Could not add missing book.");
-      }
-    });
-  }
-  if (missingList) {
-    missingList.addEventListener("click", async (event) => {
-      if (!event.target.matches("button[data-title]")) return;
-      const title = decodeURIComponent(event.target.dataset.title || "");
-      try {
-        await deleteMissingTitle(title);
-        const data = await fetchLibrary();
-        state.dontHave = data.dontHave || [];
-        renderMissing();
-      } catch (error) {
-        alert(error.message || "Could not remove missing book.");
-      }
-    });
-  }
 }
 async function init() {
   try {

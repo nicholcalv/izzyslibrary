@@ -1,17 +1,2 @@
 [build]
-  functions = "netlify/functions"
-
-[[redirects]]
-  from = "/api/books"
-  to = "/.netlify/functions/books"
-  status = 200
-
-[[redirects]]
-  from = "/api/books/*"
-  to = "/.netlify/functions/books/:splat"
-  status = 200
-
-[[redirects]]
-  from = "/api/missing"
-  to = "/.netlify/functions/missing"
-  status = 200
+  publish = "."

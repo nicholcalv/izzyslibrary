@@ -68,9 +68,6 @@
           </div>
         </section>
 
-        <button class="primary-button floating-add" id="openAddBook" type="button" aria-label="Add a book">
-          Add a Book
-        </button>
       </div>
 
       <section class="shelf">
@@ -86,80 +83,10 @@
           <h2>Books I Don't Have</h2>
           <p>Add titles to remember what to find next.</p>
         </div>
-        <form class="missing-form" id="missingForm">
-          <label>
-            <span>Title</span>
-            <input type="text" id="missingInput" placeholder="Add a missing title" />
-          </label>
-          <button class="primary-button" type="submit">Add</button>
-        </form>
         <div class="missing-list" id="missingList"></div>
       </section>
 
     </main>
-
-    <div class="modal-backdrop" id="editBackdrop" hidden>
-      <div class="modal">
-        <div class="modal__header">
-          <h2>Edit Book</h2>
-          <button class="modal__close" id="editClose" type="button">Close</button>
-        </div>
-        <form id="editForm">
-          <label>
-            <span>Title</span>
-            <input type="text" id="editTitle" required />
-          </label>
-          <label>
-            <span>Tags (optional, comma-separated)</span>
-            <input type="text" id="editTag" placeholder="Christmas, Super Special" />
-          </label>
-          <label>
-            <span>Cover image (optional)</span>
-            <input type="file" id="editCover" accept="image/*" />
-          </label>
-          <label>
-            <span>Pages read</span>
-            <input type="number" id="editPages" min="0" />
-          </label>
-          <div class="edit-actions">
-            <button type="submit" class="edit-save">Save</button>
-            <button type="button" class="delete-button" id="deleteBook">Delete</button>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div class="modal-backdrop" id="addBackdrop" hidden>
-      <div class="modal">
-        <div class="modal__header">
-          <h2>Add a Book</h2>
-          <button class="modal__close" id="addClose" type="button">Close</button>
-        </div>
-        <form id="addBookForm">
-          <label>
-            <span>Title</span>
-            <input type="text" name="title" placeholder="Book title" required />
-          </label>
-          <label>
-            <span>Pages read</span>
-            <input type="number" name="pagesRead" min="0" placeholder="0" />
-          </label>
-          <label>
-            <span>Total pages</span>
-            <input type="number" name="totalPages" min="0" placeholder="150" />
-          </label>
-          <label>
-            <span>Tags (optional, comma-separated)</span>
-            <input type="text" name="tag" placeholder="Christmas, Super Special" />
-          </label>
-          <label>
-            <span>Cover image file (optional)</span>
-            <input type="file" name="coverFile" accept="image/*" />
-          </label>
-          <button type="submit" class="edit-save">Add book</button>
-        </form>
-      </div>
-    </div>
 
     <footer>
       <p>❤️ Made with love by Isabelle and Dad ❤️</p>
