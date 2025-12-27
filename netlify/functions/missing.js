@@ -1,9 +1,18 @@
 const { Pool } = require("pg");
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-});
+const databaseUrl = process.env.DATABASE_URL;
+
+if (!databaseUrl) {
+  exports.handler = async () => ({
+    statusCode: 500,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ error: "DATABASE_URL is not set." }),
+  });
+} else {
+  const pool = new Pool({
+    connectionString: databaseUrl,
+    ssl: { rejectUnauthorized: false },
+  });
 
 function jsonResponse(statusCode, body) {
   return {
@@ -57,3 +66,4 @@ exports.handler = async (event) => {
     return jsonResponse(500, { error: error.message || "Server error." });
   }
 };
+}
